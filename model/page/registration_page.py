@@ -2,73 +2,59 @@ from model import resources
 
 from selene import browser, have, be, command
 from selene.support.shared import browser
+from allure import step
 
 class RegistrationPage:
+    @step('Открыть страницу сайта')
     def open(self):
         browser.open('https://demoqa.com/automation-practice-form')
 
-    def fill_first_name(self, value):
-        browser.element("#firstName").type(value)
-
-    def fill_last_name(self, value):
-        browser.element("#lastName").type(value)
-
-    def fill_email(self, value):
-        browser.element("#userEmail").type(value)
-
-    def choose_a_gender(self, gender):
-        gender = f'//label[@for="gender-radio-2" and text()="{gender}"]'
-        browser.element(gender).click()
-
-    def fill_number_phone(self, value):
-        browser.element("#userNumber").type(value)
-
-    def choose_date_of_birth(self, year, month, day):
-        browser.element('#dateOfBirthInput').click()
-        browser.element('.react-datepicker__month-select').send_keys(month)
-        browser.element('.react-datepicker__year-select').send_keys(year)
-        browser.element(f'.react-datepicker__day--0{day}').click()
-        return self
-
-    def choose_subject(self, value):
-        browser.element('#subjectsInput').type('History').press_enter()
-
-    def choose_hobby_2(self, hobby):
-        hobby = f'//label[@for="hobbies-checkbox-2" and text()="{hobby}"]'
-        browser.element(hobby).should(be.clickable).click()
-
-    def scroll_into_view(self):
+    @step('Зарегистрировать пользователя')
+    def register(self, user):
+        #Имя, фамилия, электронная почта, пол и номер телефона
+        browser.element('#firstName').type(user.first_name)
+        browser.element('#lastName').type(user.last_name)
+        browser.element('#userEmail').type(user.email)
+        browser.all('label[for="gender-radio-2"]').element_by(have.text(user.gender)).click()
+        browser.element('#userNumber').type(user.phone_number)
+        # Дата рождения
+        browser.element('#dateOfBirthInput').should(be.visible).click()
+        browser.element('.react-datepicker__month-select').type(user.month_of_birth)
+        browser.element('.react-datepicker__year-select').type(user.year_of_birth)
+        browser.element(f'.react-datepicker__day--0{user.day_of_birth}:not(.react-datepicker__day--outside-month)'). \
+            click()
+        # Предмет и хобби
+        browser.element('#subjectsInput').should(be.visible).type(user.subject).press_enter()
+        if 'Sports' in user.hobby:
+            browser.element('label[for=hobbies-checkbox-1]').should(be.visible).click()
+        if 'Reading' in user.hobby:
+            browser.element('label[for=hobbies-checkbox-2]').should(be.visible).click()
+        if 'Music' in user.hobby:
+            browser.element('label[for=hobbies-checkbox-3]').should(be.visible).click()
+        # Картинка
         browser.element('[id="stateCity-label"]').perform(command.js.scroll_into_view)
-
-    def download_picture(self, value):
-        browser.element('#uploadPicture').should(be.visible).type(resources.path(value))
-        return self
-
-    def current_address(self, value):
-        browser.element('#currentAddress').type(value)
-
-    def choose_country(self, value):
-        browser.element('#react-select-3-input').should(be.visible).type(value).press_enter()
-
-    def choose_city(self, value):
-        browser.element('#react-select-4-input').should(be.visible).type(value).press_enter()
-
-    def submit_form(self):
+        browser.element('#uploadPicture').should(be.visible).type(resources.path(user.picture))
+        # Адрес
+        browser.element('#currentAddress').type(user.current_address)
+        browser.element('#react-select-3-input').should(be.visible).type(user.country).press_enter()
+        browser.element('#react-select-4-input').should(be.visible).type(user.city).press_enter()
+        # Создание анкеты
         browser.element('#submit').execute_script('element.click()')
 
-    def user_must_be_registered(self, full_name, email, gender, phone_number, date_of_birth, subject, hobby, picture,
-                                country, city):
+
+    @step('Проверить, что пользовательские данные сохранены корректно')
+    def user_must_be_registered(self, user):
         browser.all(".table-dark>tbody>tr>td:nth-child(2)").should(have.texts(
-            full_name,
-            email,
-            gender,
-            phone_number,
-            date_of_birth,
-            subject,
-            hobby,
-            picture,
-            country,
-            city
+            f'{user.first_name} {user.last_name}',
+            user.email,
+            user.gender,
+            user.phone_number,
+            f'{user.day_of_birth} {user.month_of_birth},{user.year_of_birth}',
+            user.subject,
+            user.hobby,
+            user.picture,
+            user.current_address,
+            f'{user.country} {user.city}'
         ))
 
 
