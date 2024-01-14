@@ -1,4 +1,6 @@
+
 from model.page.registration_page import RegistrationPage
+
 import allure
 from allure_commons.types import Severity
 

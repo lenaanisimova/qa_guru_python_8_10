@@ -1,4 +1,5 @@
-from resource import resources
+from model import resources
+from model.resources import path
 
 from selene import browser, have, be, command
 
@@ -41,6 +42,7 @@ class RegistrationPage:
 
     def download_picture(self, value):
         browser.element('#uploadPicture').should(be.visible).type(resources.path(value))
+
         return self
 
     def current_address(self, value):
