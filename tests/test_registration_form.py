@@ -7,7 +7,7 @@ from allure_commons.types import Severity
 @allure.severity(Severity.CRITICAL)
 @allure.feature("Регистрация пользователя")
 
-def test_qa_demo():
+def test_registration_form():
     registration_page = RegistrationPage()
     registration_page.open()
     registration_page.fill_first_name('Elena')

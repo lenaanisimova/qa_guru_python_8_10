@@ -1,7 +1,6 @@
-from model import resources
+from resource import resources
 
 from selene import browser, have, be, command
-from selene.support.shared import browser
 
 class RegistrationPage:
     def open(self):
