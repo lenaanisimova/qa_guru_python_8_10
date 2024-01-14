@@ -1,7 +1,6 @@
 from model import resources
 
 from selene import browser, have, be, command
-from selene.support.shared import browser
 from allure import step
 
 class RegistrationPage:
