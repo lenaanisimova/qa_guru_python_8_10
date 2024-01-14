@@ -1,7 +1,8 @@
-from model import resources
+import resources
 
 from selene import browser, have, be, command
 from allure import step
+
 
 class RegistrationPage:
     @step('Открыть страницу сайта')
@@ -10,7 +11,7 @@ class RegistrationPage:
 
     @step('Зарегистрировать пользователя')
     def register(self, user):
-        #Имя, фамилия, электронная почта, пол и номер телефона
+        # Имя, фамилия, электронная почта, пол и номер телефона
         browser.element('#firstName').type(user.first_name)
         browser.element('#lastName').type(user.last_name)
         browser.element('#userEmail').type(user.email)
@@ -40,7 +41,6 @@ class RegistrationPage:
         # Создание анкеты
         browser.element('#submit').execute_script('element.click()')
 
-
     @step('Проверить, что пользовательские данные сохранены корректно')
     def user_must_be_registered(self, user):
         browser.all(".table-dark>tbody>tr>td:nth-child(2)").should(have.texts(
@@ -55,5 +55,3 @@ class RegistrationPage:
             user.current_address,
             f'{user.country} {user.city}'
         ))
-
-

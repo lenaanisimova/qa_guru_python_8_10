@@ -5,11 +5,11 @@ from allure_commons.types import Severity
 
 registration_page = RegistrationPage()
 
+
 @allure.tag("web")
 @allure.severity(Severity.CRITICAL)
 @allure.feature("Регистрация пользователя")
-
-def test_demoqa():
+def test_registration_form():
     user = User(first_name='Elena',
                 last_name='Anisimova',
                 email='test@mail.ru',
@@ -28,4 +28,3 @@ def test_demoqa():
     registration_page.open()
     registration_page.register(user)
     registration_page.user_must_be_registered(user)
-
